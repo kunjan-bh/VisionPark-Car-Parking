@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VisionPark | Book</title>
+	<link rel="icon" type="image/png" href="../static/input/favicon.png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Acme&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+	<link rel="stylesheet" href="{% static 'css/main.css' %}">
+	{% comment %} <link rel="stylesheet" href="{% static 'css/head.css' %}"> {% endcomment %}
+</head>
+<body>
+	<div id="wrapper">
+		<header class="header-desk">
+			<div class="container">
+				<div class="logo">
+					<a href='{% url "home" %}'><img src="{% static 'images/logo.svg' %}" alt="logo"></a>
+				</div>
+				<nav class="navigation">
+					<ul>
+						<li><a href='{% url "about" %}'>About Us</a></li>
+						<li><a href='{% url "book" %}'>Booking</a></li>
+						<li><a href='{% url "contact" %}'>Contacts</a></li>
+						{% if user.is_authenticated %}
+                            <li><a href='{% url "logout" %}'>Log Out</a></li>
+                        {% endif %}
+					</ul>
+					<div class="book-btnn">
+						<span class="book-btn-container">
+							<a href='{% url "book" %}' class="book-button">
+								<span class="btnInner">Book Now</span>
+							</a>
+						</span>
+					</div>
+				</nav>
+			</div>
+		</header>
+        <main class='main-extend-success'>  
+            <div class ="container-success">
+                <div class="confirmation-box">
+                        <h1>Booking Extended Successfully!</h1>
+                        <p>Thank you</p>
+                        <a href='{% url "bookextend" %}'>Back</a>
+                </div>
+                
+            </div>
+        </main>
+		<script src="{% static 'js/chatbot.js' %}" defer></script>
+        <footer>
+			<div class="footer">
+				<div class="footer-logo">
+					<img src="{% static 'images/logo.png' %}" alt="VisionPark Logo">
+					<p>VisionPark</p>
+					<span>Your Parking Made Easier</span>
+				</div>
+				<div class="footer-services">
+					<h3>Our Services</h3>
+					<ul>
+						<li>Book now</li>
+						<li>About Us</li>
+						<li>Home</li>
+						<li>Services</li>
+					</ul>
+				</div>
+				<div class="footer-contact">
+					<h3>Contact Us</h3>
+					<p>Phone: 9841036802</p>
+					<p>Email: bhattakunjan10@gmail.com</p>
+					<h3>Follow Us</h3>
+					<div class="footer-social">
+						<a href="#"><img src="{% static 'images/linked-in.svg' %}" alt="LinkedIn"></a>
+                        <a href="#"><img src="{% static 'images/facebook.svg' %}" alt="Facebook"></a>
+					</div>
+				</div>
+			</div>
+			<div class="footer-sub">
+				<span>Copyright © 2024 VisionPark</span>
+			</div>
+		</footer>
+    </div>
+</body>
+</html>

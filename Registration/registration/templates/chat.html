@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vision Park Chatbot</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  </head>
+  <body>
+    <div class="icon-container">
+      <button id="chatbot-toggle-btn" class="moving-icon-btn"><img src="{% static 'images/chat.svg' %}" alt="Moving Icon" class="moving-icon" onclick="toggleChatbot()"></button>
+    </div>
+    {% comment %} <button id="chatbot-toggle-btn" onclick="toggleChatbot()">Chat</button> {% endcomment %}
+    <div id="chat-container" style="display: none;">
+      <div id="chat-header">
+        <h3>Vision Park Chatbot</h3>
+        <button id="close-btn" onclick="toggleChatbot()">✖</button>
+      </div>
+      <div id="chat-box"></div>
+      <div id="input-area">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type a message..."
+          onkeydown="if(event.key === 'Enter') sendMessage()"
+        />
+        <button id="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+  </body>
+</html>

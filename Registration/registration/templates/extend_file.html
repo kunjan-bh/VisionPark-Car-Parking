@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VisionPark | Book</title>
+	<link rel="icon" type="image/png" href="../static/input/favicon.png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Acme&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+	<link rel="stylesheet" href="{% static 'css/main.css' %}">
+	{% comment %} <link rel="stylesheet" href="{% static 'css/head.css' %}"> {% endcomment %}
+</head>
+<body>
+	<div id="wrapper">
+		<header class="header-desk">
+			<div class="container">
+				<div class="logo">
+					<a href='{% url "home" %}'><img src="{% static 'images/logo.svg' %}" alt="logo"></a>
+				</div>
+				<nav class="navigation">
+					<ul>
+						<li><a href='{% url "about" %}'>About Us</a></li>
+						<li><a href='{% url "book" %}'>Booking</a></li>
+						<li><a href='{% url "contact" %}'>Contacts</a></li>
+						{% if user.is_authenticated %}
+                            <li><a href='{% url "logout" %}'>Log Out</a></li>
+                        {% endif %}
+					</ul>
+					<div class="book-btnn">
+						<span class="book-btn-container">
+							<a href='{% url "book" %}' class="book-button">
+								<span class="btnInner">Book Now</span>
+							</a>
+						</span>
+					</div>
+				</nav>
+			</div>
+		</header>
+		<main class="main-booking-history">
+			<div class ="container-history">
+                <div class="history-box">
+					<h1>Your Bookings</h1>
+					{% if bookings %}
+						<table border="1" cellpadding="10">
+							<thead>
+								<tr>
+									<th>Location</th>
+									<th>Selected Slot</th>
+									<th>Start Time</th>
+									<th>End Time</th>
+									<th>Booking Type</th>
+								</tr>
+							</thead>    
+							<tbody>
+								{% for booking in bookings %}
+									<tr>
+										<td>{{ booking.location }}</td>
+										<td>{{ booking.selected_slot }}</td>
+										<td>{{ booking.start_time|date:"Y-m-d H:i" }}</td>
+										<td>{{ booking.end_time|date:"Y-m-d H:i" }}</td>
+										<td>{{ booking.booking_type}}</td>
+										
+										{% if booking.booking_type == 'fixed' %}
+										<td>
+											
+											<form action="{% url 'extend_booking' booking.id %}" method="POST" onsubmit="askhr({{ booking.id }})">
+												{% csrf_token %}
+												<input type="hidden" id="extend-time-{{ booking.id }}" name="extend_time">
+												<button type="submit" class="extend-btn">Extend</button>
+												
+												<script>
+													function askhr(bookingId) {
+														var extendTime = prompt("Enter the number of minutes to extend:");
+														if (extendTime === null || extendTime === "" || isNaN(extendTime) || extendTime <= 0) {
+															alert('Please enter a valid number of minutes.');
+															return false;
+														}
+														document.getElementById('extend-time-' + bookingId).value = extendTime;
+														alert("Corresponding "+ 'Rs '+ extendTime+ " will be deducted from the associated card number. (Price: Rs 1 per extra minute)");
+
+														return true;
+													}
+												</script>
+											</form>
+											
+										</td>
+										{% endif %}
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					{% else %}
+						<p>You have no bookings yet.</p>
+					{% endif %}
+                    <a href='{% url "book" %}'>Back</a>
+                </div>
+            </div>
+            
+			{% if messages %}
+				<div class="message-container">
+					{% for message in messages %}
+						
+						<script>
+							alert('{{ message }}');
+						</script>
+					{% endfor %}
+				</div>
+			{% endif %}
+		</main>
+		<script src="{% static 'js/chatbot.js' %}" defer></script>
+		<footer>
+			<div class="footer">
+				<div class="footer-logo">
+					<img src="{% static 'images/logo.png' %}" alt="VisionPark Logo">
+					<p>VisionPark</p>
+					<span>Your Parking Made Easier</span>
+				</div>
+				<div class="footer-services">
+					<h3>Our Services</h3>
+					<ul>
+						<li>Book now</li>
+						<li>About Us</li>
+						<li>Home</li>
+						<li>Services</li>
+					</ul>
+				</div>
+				<div class="footer-contact">
+					<h3>Contact Us</h3>
+					<p>Phone: 9841036802</p>
+					<p>Email: bhattakunjan10@gmail.com</p>
+					<h3>Follow Us</h3>
+					<div class="footer-social">
+						<a href="#"><img src="{% static 'images/linked-in.svg' %}" alt="LinkedIn"></a>
+                        <a href="#"><img src="{% static 'images/facebook.svg' %}" alt="Facebook"></a>
+					</div>
+				</div>
+			</div>
+			<div class="footer-sub">
+				<span>Copyright © 2024 VisionPark</span>
+			</div>
+		</footer>
+	</div>
+	<script src="{% static 'js/notification.js' %}"></script>
+</body>
+</html>

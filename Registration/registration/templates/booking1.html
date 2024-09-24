@@ -1,0 +1,278 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VisionPark | Fixed Book</title>
+	<link rel="icon" type="image/png" href="../static/input/favicon.png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Acme&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+	<link rel="stylesheet" href="{% static 'css/main.css' %}">
+	{% comment %} <link rel="stylesheet" href="{% static 'css/head.css' %}"> {% endcomment %}
+</head>
+<body>
+	<div id="wrapper">
+		<header class="header-desk">
+			<div class="container">
+				<div class="logo">
+					<a href='{% url "home" %}'><img src="{% static 'images/logo.svg' %}" alt="logo"></a>
+				</div>
+				<nav class="navigation">
+					<ul>
+						<li><a href='{% url "about" %}'>About Us</a></li>
+						<li><a href='{% url "book" %}'>Booking</a></li>
+						<li><a href='{% url "contact" %}'>Contacts</a></li>
+						{% if user.is_authenticated %}
+                            <li><a href='{% url "logout" %}'>Log Out</a></li>
+                        {% endif %}
+					</ul>
+					<div class="book-btnn">
+						<span class="book-btn-container">
+							<a href='{% url "book" %}' class="book-button">
+								<span class="btnInner">Book Now</span>
+							</a>
+						</span>
+					</div>
+				</nav>
+			</div>
+		</header>
+		<main class="main-whatsnew">
+			<div class="container">
+				<h2 class="book-title">Available Slots</h2>
+				<h5 class="book-subtitle">Book the available space for parking your car.</h5>
+			</div>
+			<div class="container">
+				<h3>Car Parking Booking Form</h3>
+				<form method="POST" id="bookingForm">
+					{% csrf_token %}
+					<label for="name">Name:</label>
+					<input type="text" id="name" name="name" required><br><br>
+		
+					<label for="phone">Phone Number:</label>
+					<input type="text" id="phone" name="phone" required pattern="\d{10}"><br><br>
+		
+					{% comment %} <label for="licensePlate">License Plate/Car Number:</label>
+					<input type="text" id="licensePlate" name="licensePlate"><br><br> {% endcomment %}
+		
+					<label for="location">Preferred Location:</label>
+					<select id="location" name="location" required>
+						<option value="">Select Location</option>
+						<option value="Maitidevi-Sunway">Maitidevi</option>
+						<option value="Maitidevi-LLBF">Newroad</option>
+						<option value="Balaju-Height">Balaju</option>
+					</select><br><br>
+		
+					<div id="slots" style="display: none;">
+						<div class="location_redirect">
+							<a href="https://www.google.com/maps/place/Sunway+College+Kathmandu/@27.7055835,85.3317284,17z/data=!3m1!4b1!4m6!3m5!1s0x39eb1999ce231acd:0xef773857c30983e2!8m2!3d27.7055835!4d85.3343087!16s%2Fg%2F11ckj7c9tt?entry=ttu&g_ep=EgoyMDI0MDgyOC4wIKXMDSoASAFQAw%3D%3D" target="_blank"><img src="{% static 'images/google_map.png' %}"><span>See location</span></a>
+						</div>
+						<p>Select a Slot:</p>
+						<input type="hidden" name="selected_slot" id="selected_slot" value="">
+						<button onclick="selectedslot('Slot-1')" id="slot1-btn" type="button" class="slot-btn" data-slot="Slot-1">Slot-1</button>
+						<button onclick="selectedslot('Slot-2')" type="button" id="slot2-btn" class="slot-btn" data-slot="Slot-2">Slot-2</button>
+						<button onclick="selectedslot('Slot-3')" id="slot3-btn" type="button" class="slot-btn" data-slot="Slot-3">Slot-3</button>
+						<button onclick="selectedslot('Slot-4')" type="button" id="slot4-btn" class="slot-btn" data-slot="Slot-4">Slot-4</button>
+					</div>
+					<br><br> 
+
+					<div id="timeFields" style="display: none;">
+						<button id="showOverlayBtn"></button>
+						
+
+						<div id="overlay" class="overlay">
+							<div class="overlay-content">
+								<h2 id = "slotheader"></h2>
+								<div id="timerange"></div>
+								
+								<button class="close-btn" id="closeOverlayBtn">Close</button>
+							</div>
+						</div>
+
+
+						<br><br>
+                        <label for="timePicker">Starting Time: (Select Upcoming Hours)</label>
+                        <div id="timePicker" class="time-picker">
+                            <div class="time-group">
+                                <div class="time-controls">
+                                    <button type="button" id="hoursUp" aria-label="Increase hours">▲</button>
+                                    <button type="button" id="hoursDown" aria-label="Decrease hours">▼</button>
+                                </div>
+                                <div class="time-display">
+                                    <span id="hours">00</span>
+                                </div>
+                            </div>
+                            <span>:</span>
+                            <div class="time-group">
+                                <div class="time-controls">
+                                    <button type="button" id="minutesUp" aria-label="Increase minutes">▲</button>
+                                    <button type="button" id="minutesDown" aria-label="Decrease minutes">▼</button>
+                                </div>
+                                <div class="time-display">
+                                    <span id="minutes">00</span>
+                                </div>
+                            </div>
+                        </div>
+						<label for="timePicker">Hours:</label>
+						<input type="number" id="numHours" name="numHours" min="1" max="24" required>
+						<br><br>
+                        <input type="hidden" id="startTime" name="startTime" required>
+                        <br><br>
+
+						<div id="paymentSection" style="display: none;">
+							
+
+							<h3>Payment Details</h3>
+							<div id="total-amount" style="margin-top: 20px; font-weight: bold;">
+								Total Amount: Rs<span id="amount"> 0</span>
+							</div>
+							<label for="cardNumber">Card Number:(Without spaces)</label>
+							<input type="text" id="cardNumber" name="cardNumber" required pattern="\d{16}" placeholder="1234 5678 9101 1121"><br><br>
+							
+							<label for="expiryDate">Expiry Date:</label>
+							<input type="month" id="expiryDate" name="expiryDate" required><br><br>
+							
+							<label for="cvv">CVV:</label>
+							<input type="text" id="cvv" name="cvv" required pattern="\d{3}" placeholder="123"><br><br>
+							
+							{% comment %} <button type="submit" class="payment-btn">Make Payment</button> {% endcomment %}
+							<button type="submit">Make Payment & Book</button>
+						</div>
+						
+						
+                        {% comment %} <button type="submit">Book</button> {% endcomment %}
+						
+
+                    </div>
+					
+				
+				</form>
+				{% if messages %}
+				<div class="message-container">
+					{% for message in messages %}
+						
+						<script>
+							alert('{{ message }}');
+						</script>
+					{% endfor %}
+				</div>
+				{% endif %}
+				<div class = "booking_history_btns">
+					<a href='{% url "bookinghistory" %}' class="bookinghistory-btn">See your Bookings</a>
+					<a href='{% url "bookextend" %}' class="bookinghistory-btn1">Want to Extend your bookings?</a>
+				</div>
+				
+				<br>
+				<br>
+				
+			</div>
+
+			<script src="../static/js/my-custom-script-booking1.js"></script> 
+		</main>
+		<script src="{% static 'js/chatbot.js' %}" defer></script>
+		<footer>
+			<div class="footer">
+				<div class="footer-logo">
+					<img src="{% static 'images/logo.png' %}" alt="VisionPark Logo">
+					<p>VisionPark</p>
+					<span>Your Parking Made Easier</span>
+				</div>
+				<div class="footer-services">
+					<h3>Our Services</h3>
+					<ul>
+						<li>Book now</li>
+						<li>About Us</li>
+						<li>Home</li>
+						<li>Services</li>
+					</ul>
+				</div>
+				<div class="footer-contact">
+					<h3>Contact Us</h3>
+					<p>Phone: 9841036802</p>
+					<p>Email: bhattakunjan10@gmail.com</p>
+					<h3>Follow Us</h3>
+					<div class="footer-social">
+						<a href="#"><img src="{% static 'images/linked-in.svg' %}" alt="LinkedIn"></a>
+                        <a href="#"><img src="{% static 'images/facebook.svg' %}" alt="Facebook"></a>
+					</div>
+				</div>
+			</div>
+			<div class="footer-sub">
+				<span>Copyright © 2024 VisionPark</span>
+			</div>
+		</footer>
+	</div>
+	<script>
+		function selectedslot(slot_name) {
+			var link = document.getElementById('showOverlayBtn');
+			link.innerHTML = "See booked Times for the selected slot! " +"->"+ " "+slot_name;
+			fetchforslotbooked_info(slot_name);
+			document.getElementById('paymentSection').style.display = 'block';
+			
+		}
+		
+		// overlay open 
+		const showOverlayBtn = document.getElementById('showOverlayBtn');
+		const overlay = document.getElementById('overlay');
+		const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+		showOverlayBtn.addEventListener('click', function() {
+			event.preventDefault()
+			overlay.style.display = 'block';
+        });
+
+        closeOverlayBtn.addEventListener('click', function() {
+			event.preventDefault()
+            overlay.style.display = 'none';
+			
+        }); //overlay close
+
+
+		//document.addEventListener("DOMContentLoaded", function() { //fetch from views.py ko show_slot_avaibilyty method-----------CURRENT WORK
+			
+		function fetchforslotbooked_info(slot_name){
+		
+			fetch('/get-slot-availability/')
+			.then(response => response.json())
+			.then(data => {
+				if (slot_name =='Slot-1'){
+					document.getElementById("slotheader").innerText = "Already booked Slot-1 time range:";
+					timeRanges = data.list_for_slot1;
+				} else if (slot_name =='Slot-2'){
+					document.getElementById("slotheader").innerText = "Already booked Slot-2 time range:";
+					timeRanges = data.list_for_slot2;
+				} else if (slot_name =='Slot-3'){
+					document.getElementById("slotheader").innerText = "Already booked Slot-3 time range:";
+					timeRanges = data.list_for_slot3;
+				} else {
+					document.getElementById("slotheader").innerText = "Already booked Slot-4 time range:";
+					timeRanges = data.list_for_slot4;
+				}
+				const timerangeElement = document.getElementById("timerange");
+				timerangeElement.innerHTML = '';
+	
+				// Create list items for each time range
+				timeRanges.forEach(time => {
+					const li = document.createElement("li");
+					li.innerText = time;
+					timerangeElement.appendChild(li);
+				});
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+		}
+		document.getElementById('numHours').addEventListener('input', function() {
+			const hours = parseInt(this.value);
+			const ratePerHour = 25; 
+			const totalAmount = hours * ratePerHour;
+		
+			document.getElementById('amount').innerText = totalAmount;
+		});
+		
+
+	</script>
+	<script src="{% static 'js/notification.js' %}"></script>
+</body>
+</html>
